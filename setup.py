@@ -4,7 +4,7 @@ setup(
     name='pybot-youpi2-shell',
     setup_requires=['setuptools_scm'],
     use_scm_version={
-        'write_to': 'src/pybot/youpi2/__version__.py'
+        'write_to': 'src/pybot/youpi2/shell/__version__.py'
     },
     namespace_packages=['pybot', 'pybot.youpi2'],
     packages=find_packages("src"),
@@ -18,7 +18,7 @@ setup(
     description='Youpi2 arm runtime shell',
     entry_points={
         'console_scripts': [
-            'youpi2-shell = pybot.youpi2.shell.controller:main',
+            'youpi2-shell = pybot.youpi2.shell.toplevel:main',
         ]
     }
 )
