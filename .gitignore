@@ -3,3 +3,4 @@ dist
 *.pyc
 *.egg-info
 __version__.*
+.fab_tasks~
