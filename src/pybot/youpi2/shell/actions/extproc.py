@@ -22,8 +22,7 @@ class ExternalProcessAction(Action):
         # start the demonstration as a child process
         try:
             self.logger.info('starting subprocess')
-            cmde = [self.COMMAND] if isinstance(self.COMMAND, basestring) else self.COMMAND
-            app_proc = subprocess.Popen(cmde)
+            app_proc = subprocess.Popen(self.COMMAND, shell=True)
 
         except OSError as e:
             self.panel.clear()
@@ -75,5 +74,5 @@ class BrowserlUi(ExternalProcessAction):
 
 
 class DemoAuto(ExternalProcessAction):
-    COMMAND = "youpi2-demo-auto"
+    COMMAND = "youpi2-demo-auto --pnldev /mnt/lcdfs"
     TITLE = "Automatic demo mode"
