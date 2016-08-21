@@ -24,22 +24,17 @@ from pybot.youpi2.shell.actions.youpi_system_actions import Reset, Disable
 
 __author__ = 'Eric Pascual'
 
-logging.config.dictConfig(log.get_logging_configuration({
+_logging_config = log.get_logging_configuration({
     'handlers': {
         'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.expanduser('~/youpi2.log'),
-            'maxBytes': 1024 * 10,
-            'backupCount': 5
+            'filename': os.path.expanduser('~/youpi2.log')
         }
     },
-    'loggers': {
-        'toplevel': {
-            'handlers': ['file'],
-            'propagate': False
-        }
+    'root': {
+        'handlers': ['file']
     }
-}))
+})
+logging.config.dictConfig(_logging_config)
 
 
 class TopLevel(object):
@@ -47,7 +42,7 @@ class TopLevel(object):
     QUIT = -10
 
     def __init__(self):
-        self.logger = log.getLogger('toplevel')
+        self.logger = log.getLogger()
         self.panel = ControlPanel(FileSystemDevice('/mnt/lcdfs'))
         # TODO
         self.arm = None
@@ -56,7 +51,10 @@ class TopLevel(object):
         DisplayAbout(self.panel, None, version=version).execute()
 
     def run(self):
+        self.logger.info('-' * 40)
         self.logger.info('started')
+        self.logger.info('version: %s', version)
+        self.logger.info('-' * 40)
         self.panel.reset()
         self.display_about()
 

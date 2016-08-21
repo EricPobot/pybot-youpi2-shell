@@ -38,13 +38,14 @@ class ExternalProcessAction(Action):
         else:
             self.panel.clear_was_locked_status()
 
-            self.logger.info('monitoring end command')
+            self.logger.info('watching for keypad actions...')
             exit_key_combo = {Keys.ESC}
             while True:
                 self.panel.exit_key_message()
 
                 keys = self.panel.get_keys()
                 if keys == exit_key_combo:
+                    self.logger.info('exit action caught')
                     self.logger.info('sending terminate signal to subprocess %d', app_proc.pid)
                     app_proc.terminate()
                     self.logger.info('waiting for completion')
