@@ -7,7 +7,6 @@ Manages the arm and the user interactions.
 
 import subprocess
 import logging.config
-from logging.handlers import RotatingFileHandler
 import os
 
 from pybot.core import log
@@ -28,7 +27,7 @@ __author__ = 'Eric Pascual'
 logging.config.dictConfig(log.get_logging_configuration({
     'handlers': {
         'file': {
-            'class': RotatingFileHandler,
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.expanduser('~/youpi2.log'),
             'maxBytes': 1024 * 10,
             'backupCount': 5
@@ -56,6 +55,7 @@ class TopLevel(object):
         DisplayAbout(self.panel, None, version=version).execute()
 
     def run(self):
+        self.logger.info('started')
         self.panel.reset()
         self.display_about()
 
@@ -72,22 +72,30 @@ class TopLevel(object):
             menu.display()
             action = menu.handle_choice()
             if action == self.QUIT:
+                self.logger.info('QUIT key used')
                 self.panel.leds_off()
-                return
+                break
+
+        self.logger.info('terminated')
 
     def sublevel(self, title, choices, exit_on=None):
+        self.logger.info('entering sublevel "%s"', title)
         sel = Selector(
             title=title,
             choices=choices,
             panel=self.panel
         )
 
-        exit_on = exit_on or [Selector.ESC]
-        while True:
-            sel.display()
-            action = sel.handle_choice()
-            if action in exit_on:
-                return action
+        try:
+            exit_on = exit_on or [Selector.ESC]
+            while True:
+                sel.display()
+                action = sel.handle_choice()
+                if action in exit_on:
+                    return action
+
+        finally:
+            self.logger.info('exiting from sublevel "%s"', title)
 
     def mode_selector(self):
         action = self.sublevel(
