@@ -35,7 +35,8 @@ logging.config.dictConfig(log.get_logging_configuration({
     },
     'loggers': {
         'toplevel': {
-            'handlers': ['file']
+            'handlers': ['file'],
+            'propagate': False
         }
     }
 }))
@@ -79,7 +80,7 @@ class TopLevel(object):
         self.logger.info('terminated')
 
     def sublevel(self, title, choices, exit_on=None):
-        self.logger.info('entering sublevel "%s"', title)
+        self.logger.info('entering sub-level "%s"', title)
         sel = Selector(
             title=title,
             choices=choices,
@@ -95,7 +96,7 @@ class TopLevel(object):
                     return action
 
         finally:
-            self.logger.info('exiting from sublevel "%s"', title)
+            self.logger.info('exiting from sub-level "%s" with action=%s', title, action)
 
     def mode_selector(self):
         action = self.sublevel(
