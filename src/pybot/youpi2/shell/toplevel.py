@@ -7,6 +7,7 @@ Manages the arm and the user interactions.
 
 import subprocess
 import logging.config
+from logging.handlers import RotatingFileHandler
 import os
 
 from pybot.core import log
@@ -27,11 +28,14 @@ __author__ = 'Eric Pascual'
 logging.config.dictConfig(log.get_logging_configuration({
     'handlers': {
         'file': {
-            'filename': os.path.expanduser('~/youpi2.log')
+            'class': RotatingFileHandler,
+            'filename': os.path.expanduser('~/youpi2.log'),
+            'maxBytes': 1024 * 10,
+            'backupCount': 5
         }
     },
     'loggers': {
-        'root': {
+        'toplevel': {
             'handlers': ['file']
         }
     }
@@ -43,7 +47,7 @@ class TopLevel(object):
     QUIT = -10
 
     def __init__(self):
-        self.logger = log.getLogger()
+        self.logger = log.getLogger('toplevel')
         self.panel = ControlPanel(FileSystemDevice('/mnt/lcdfs'))
         # TODO
         self.arm = None
