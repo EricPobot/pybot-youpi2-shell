@@ -27,10 +27,11 @@ class ExternalProcessAction(Action):
 
         except OSError as e:
             self.panel.clear()
-            self.panel.center_text_at("ERROR", line=2)
-            self.panel.center_text_at(e.message[:20], line=3)
-            self.panel.center_text_at(e.message[20:40], line=4)
-            self.panel.write_at(LCD03.CH_OK, 1, self.panel.width)
+            self.panel.center_text_at("ERROR", line=1)
+            msg = str(e)
+            self.panel.write_at(msg[:20], line=3)
+            self.panel.write_at(msg[20:40], line=4)
+            self.panel.write_at(chr(LCD03.CH_OK), 1, self.panel.width)
             self.panel.wait_for_key([Keys.OK])
 
         else:
