@@ -6,7 +6,7 @@ setup(
     use_scm_version={
         'write_to': 'src/pybot/youpi2/shell/__version__.py'
     },
-    namespace_packages=['pybot', 'pybot.youpi2'],
+    namespace_packages=['pybot', 'pybot.youpi2>=0.23'],
     packages=find_packages("src"),
     package_dir={'': 'src'},
     url='',

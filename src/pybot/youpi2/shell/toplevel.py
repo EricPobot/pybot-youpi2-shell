@@ -15,7 +15,7 @@ from pybot.youpi2.shell.__version__ import version
 
 from pybot.youpi2.ctlpanel.widgets import Menu, Selector
 from pybot.youpi2.ctlpanel.api import ControlPanel
-from pybot.youpi2.ctlpanel.devices.fs import ControlPanelDevice
+from pybot.youpi2.ctlpanel.devices.fs import FileSystemDevice
 from pybot.youpi2.ctlpanel.keys import Keys
 
 from pybot.youpi2.shell.actions.about import DisplayAbout
@@ -44,7 +44,7 @@ class TopLevel(object):
 
     def __init__(self):
         self.logger = log.getLogger()
-        self.panel = ControlPanel(ControlPanelDevice('/mnt/lcdfs'))
+        self.panel = ControlPanel(FileSystemDevice('/mnt/lcdfs'))
         # TODO
         self.arm = None
 
