@@ -6,14 +6,14 @@ setup(
     use_scm_version={
         'write_to': 'src/pybot/youpi2/shell/__version__.py'
     },
-    namespace_packages=['pybot', 'pybot.youpi2>=0.23'],
+    namespace_packages=['pybot', 'pybot.youpi2'],
     packages=find_packages("src"),
     package_dir={'': 'src'},
     url='',
     license='',
     author='Eric Pascual',
     author_email='eric@pobot.org',
-    install_requires=['pybot-youpi2', 'pybot-lcd-fuse>=0.20.1'],
+    install_requires=['pybot-youpi2>=0.23', 'pybot-lcd-fuse>=0.20.1'],
     download_url='https://github.com/Pobot/PyBot',
     description='Youpi2 arm runtime shell',
     entry_points={
