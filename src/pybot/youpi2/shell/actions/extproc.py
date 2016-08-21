@@ -2,6 +2,7 @@
 
 import time
 import subprocess
+import shlex
 
 from pybot.lcd.lcd_i2c import LCD03
 
@@ -21,8 +22,9 @@ class ExternalProcessAction(Action):
 
         # start the demonstration as a child process
         try:
-            self.logger.info('starting subprocess')
-            app_proc = subprocess.Popen(self.COMMAND, shell=True)
+            self.logger.info('starting "%s" as subprocess', self.COMMAND)
+            app_proc = subprocess.Popen(shlex.split(self.COMMAND))
+            self.logger.info('PID=%d', app_proc.pid)
 
         except OSError as e:
             self.panel.clear()
@@ -43,11 +45,11 @@ class ExternalProcessAction(Action):
 
                 keys = self.panel.get_keys()
                 if keys == exit_key_combo:
-                    self.logger.info('sending terminate signal to subprocess')
+                    self.logger.info('sending terminate signal to subprocess %d', app_proc.pid)
                     app_proc.terminate()
                     self.logger.info('waiting for completion')
                     app_proc.wait()
-                    self.logger.info('terminated')
+                    self.logger.info('terminated with rc=%d', app_proc.returncode)
                     return
 
                 time.sleep(0.2)
