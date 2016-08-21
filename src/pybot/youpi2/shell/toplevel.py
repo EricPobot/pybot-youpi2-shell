@@ -11,7 +11,7 @@ import os
 
 from pybot.core import log
 
-from pybot.youpi2.__version__ import version
+from pybot.youpi2.shell.__version__ import version
 
 from pybot.youpi2.ctlpanel.widgets import Menu, Selector
 from pybot.youpi2.ctlpanel.api import ControlPanel
