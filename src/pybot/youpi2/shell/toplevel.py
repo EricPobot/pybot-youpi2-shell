@@ -89,9 +89,9 @@ class TopLevel(object):
         action = self.sublevel(
             title='Select mode',
             choices=(
-                ('Demo', DemoAuto(self.panel, self.arm).execute),
-                ('Gamepad', GamepadControl(self.panel, self.arm).execute),
-                ('Minitel UI', MinitelUi(self.panel, self.arm).execute),
+                ('Demo', DemoAuto(self.panel, self.arm, self.logger).execute),
+                ('Gamepad', GamepadControl(self.panel, self.arm, self.logger).execute),
+                ('Minitel UI', MinitelUi(self.panel, self.arm, self.logger).execute),
                 ('Network', self.network_control),
             )
         )
@@ -102,8 +102,8 @@ class TopLevel(object):
         action = self.sublevel(
             title='Network mode',
             choices=(
-                ('Web services', WebServicesControl(self.panel, self.arm).execute),
-                ('Browser UI', BrowserlUi(self.panel, self.arm).execute),
+                ('Web services', WebServicesControl(self.panel, self.arm, self.logger).execute),
+                ('Browser UI', BrowserlUi(self.panel, self.arm, self.logger).execute),
             )
         )
         if action != Selector.ESC:
@@ -114,8 +114,8 @@ class TopLevel(object):
             title='System',
             choices=(
                 ('About', self.display_about_modal),
-                ('Reset Youpi', Reset(self.panel, self.arm).execute),
-                ('Disable Youpi', Disable(self.panel, self.arm).execute),
+                ('Reset Youpi', Reset(self.panel, self.arm, self.logger).execute),
+                ('Disable Youpi', Disable(self.panel, self.arm, self.logger).execute),
                 ('Shutdown', self.shutdown),
             ),
             exit_on=(Selector.ESC, self.SHUTDOWN, self.QUIT)
