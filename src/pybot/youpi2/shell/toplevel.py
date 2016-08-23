@@ -85,6 +85,7 @@ class TopLevel(object):
             panel=self.panel
         )
 
+        action = None
         try:
             exit_on = exit_on or [Selector.ESC]
             while True:
@@ -92,6 +93,9 @@ class TopLevel(object):
                 action = sel.handle_choice()
                 if action in exit_on:
                     return action
+
+        except Exception:
+            action = 'ERROR'
 
         finally:
             self.logger.info('exiting from sub-level "%s" with action=%s', title, action)
