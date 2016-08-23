@@ -23,7 +23,7 @@ class ExternalProcessAction(Action):
         self.panel.center_text_at(self.TITLE, line=2)
 
         self.panel.clear_was_locked_status()
-        self.panel.exit_key_message(keys=exit_key_combo)
+        self.panel.exit_key_message(msg="%(key)s key to kill", keys=exit_key_combo)
         time.sleep(3)
         self.panel.leds_off()
 
