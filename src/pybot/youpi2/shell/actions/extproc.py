@@ -17,8 +17,15 @@ class ExternalProcessAction(Action):
     TITLE = None
 
     def execute(self):
+        exit_key_combo = {Keys.ESC, Keys.OK}
+
         self.panel.clear()
         self.panel.center_text_at(self.TITLE, line=2)
+
+        self.panel.clear_was_locked_status()
+        self.panel.exit_key_message(keys=exit_key_combo)
+        time.sleep(3)
+        self.panel.leds_off()
 
         # start the demonstration as a child process
         try:
@@ -36,13 +43,8 @@ class ExternalProcessAction(Action):
             self.panel.wait_for_key([Keys.OK])
 
         else:
-            self.panel.clear_was_locked_status()
-
             self.logger.info('watching for keypad actions...')
-            exit_key_combo = {Keys.ESC}
             while True:
-                self.panel.exit_key_message()
-
                 keys = self.panel.get_keys()
                 if keys == exit_key_combo:
                     self.logger.info('exit action caught')
