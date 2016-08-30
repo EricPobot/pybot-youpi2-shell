@@ -101,22 +101,27 @@ class TopLevel(object):
         self.panel.reset()
         self.logger.info('terminated')
 
-    def sublevel(self, title, choices, exit_on=None):
+    def sublevel(self, title, choices):
+        """ Displays a navigation sub-level page with an action spinner, and executes
+        the selected ones until the user chooses to return from this level
+        by using the ESC/Cancel key.
+
+        :param str title: the title displayed for the sub-level page
+        :param iterable choices: the selector choices specification (see `Selector` class documentation)
+        """
         self.logger.info('entering sub-level "%s"', title)
+
         sel = Selector(
             title=title,
             choices=choices,
             panel=self.panel
         )
 
-        action = None
         try:
-            exit_on = exit_on or [Selector.ESC]
             while self._active:
                 sel.display()
-                action = sel.handle_choice()
-                if action in exit_on:
-                    return action
+                if sel.handle_choice():
+                    return
 
         except Interrupted:
             self.logger.info('exiting from sub-level "%s" after external interruption', title)
@@ -126,10 +131,10 @@ class TopLevel(object):
             self.logger.info('exiting from sub-level "%s" with unexpected error %s', title, e)
 
         else:
-            self.logger.info('exiting from sub-level "%s" with action=%s', title, action)
+            self.logger.info('exiting from sub-level "%s"', title)
 
     def mode_selector(self):
-        action = self.sublevel(
+        self.sublevel(
             title='Select mode',
             choices=(
                 ('Demo', DemoAuto(self.panel, self.arm, self.logger).execute),
@@ -138,70 +143,54 @@ class TopLevel(object):
                 ('Network', self.network_control),
             )
         )
-        if action != Selector.ESC:
-            return action
 
     def network_control(self):
-        action = self.sublevel(
+        self.sublevel(
             title='Network mode',
             choices=(
                 ('Web services', WebServicesControl(self.panel, self.arm, self.logger).execute),
                 ('Browser UI', BrowserlUi(self.panel, self.arm, self.logger).execute),
             )
         )
-        if action != Selector.ESC:
-            return action
 
     def system_functions(self):
-        return self.sublevel(
+        self.sublevel(
             title='System',
             choices=(
                 ('About', self.display_about_modal),
                 ('Reset Youpi', Reset(self.panel, self.arm, self.logger).execute),
                 ('Disable Youpi', Disable(self.panel, self.arm, self.logger).execute),
                 ('Shutdown', self.shutdown),
-            ),
-            exit_on=(Selector.ESC, self.SHUTDOWN, self.QUIT)
+            )
         )
 
     def display_about_modal(self):
         self.display_about()
 
+    def _shutdown_action(self, title, command):
+        if self.panel.countdown(title, delay=3, can_abort=True):
+            self.logger.info("executing : %s", command)
+            subprocess.call('(sleep 1 ; sudo %s) &' % command, shell=True)
+
+    def _quit_to_shell(self):
+        self.logger.info('"quit to shell" requested')
+        self.panel.clear()
+        self.panel.write_at("I'll be back...")
+        time.sleep(1)
+
     def shutdown(self):
         choices = [
-            ('Reboot', 'R'),
-            ('Halt', 'H'),
-            ('Power off', 'P'),
+            ('Reboot', lambda: self._shutdown_action('Reboot', 'reboot')),
+            ('Halt', lambda: self._shutdown_action('Halt', 'halt')),
+            ('Power off', lambda: self._shutdown_action('Power off', 'poweroff')),
         ]
         if self.can_quit_to_shell:
-            choices.append(('Quit to shell', 'Q'))
+            choices.append(('Quit to shell', self._quit_to_shell))
 
-        action = self.sublevel(
+        self.sublevel(
             title='Shutdown',
-            choices=choices,
-            exit_on=[Selector.ESC] + [c[-1] for c in choices]
+            choices=choices
         )
-
-        if action == Selector.ESC:
-            return action
-
-        elif action == 'Q':
-            self.logger.info('"quit to shell" requested')
-            self.panel.clear()
-            self.panel.write_at("I'll be back...")
-            time.sleep(1)
-            return self.QUIT
-
-        else:
-            command, title = {
-                'R': ('systemctl reboot', 'Reboot'),
-                'P': ('systemctl poweroff', 'Power off'),
-                'H': ('systemctl halt', 'Halt'),
-            }[action]
-            if self.panel.countdown(title, delay=3, can_abort=True):
-                self.logger.info("executing : %s", command)
-                subprocess.call('(sleep 1 ; sudo %s) &' % command, shell=True)
-                return self.SHUTDOWN
 
 
 def main():
