@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from . import Action
+from .base import Action
 
 __author__ = 'Eric Pascual'
+
+_all__ = ['Reset', 'Disable']
 
 
 class Reset(Action):
