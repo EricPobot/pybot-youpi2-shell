@@ -10,19 +10,19 @@ import logging.config
 import signal
 import time
 import argparse
+import os
 
 from pybot.core import log
 
 from pybot.youpi2.shell.__version__ import version
 
-from pybot.youpi2.ctlpanel.widgets import Menu, Selector
+from pybot.youpi2.ctlpanel.widgets import Selector
 from pybot.youpi2.ctlpanel.api import ControlPanel, Interrupted
 from pybot.youpi2.ctlpanel.devices.fs import FileSystemDevice
-from pybot.youpi2.ctlpanel.keys import Keys
 
-from pybot.youpi2.shell.actions.about import DisplayAbout
-from pybot.youpi2.shell.actions.extproc import DemoAuto, WebServicesControl, BrowserlUi, GamepadControl, MinitelUi
-from pybot.youpi2.shell.actions.youpi_maint import Reset, Disable
+from pybot.youpi2.shell.actions.info import *
+from pybot.youpi2.shell.actions.extproc import *
+from pybot.youpi2.shell.actions.youpi_maint import *
 
 __author__ = 'Eric Pascual'
 
@@ -46,6 +46,8 @@ class TopLevel(object):
     def __init__(self, can_quit_to_shell=False):
         self.logger = log.getLogger()
 
+        self._is_root = os.getuid() == 0
+
         self._active = True
         self.can_quit_to_shell = can_quit_to_shell
 
@@ -55,6 +57,9 @@ class TopLevel(object):
 
     def display_about(self):
         DisplayAbout(self.panel, None, version=version).execute()
+
+    def display_system_info(self):
+        DisplaySystemInfo(self.panel, None).execute()
 
     def _terminate_sig_handler(self, sig, frame):
         self.logger.info("signal %s received", {
@@ -77,44 +82,51 @@ class TopLevel(object):
         self.panel.reset()
         self.display_about()
 
-        menu = Menu(
-            title='Main menu',
-            choices={
-                Keys.PREVIOUS: ('System', self.system_functions),
-                Keys.NEXT: ('Mode', self.mode_selector),
-            },
-            panel=self.panel
-        )
-
         try:
-            while self._active:
-                menu.display()
-                action = menu.handle_choice()
-                if action == self.QUIT:
-                    self.logger.info('QUIT key used')
-                    self.panel.leds_off()
-                    break
+            self.sublevel(
+                'Main menu',
+                choices=(
+                    ('Mode', self.mode_selector),
+                    ('System', self.system_functions),
+                    ('About', self.display_about_modal),
+                    ('Info', self.display_system_info),
+                ),
+                is_toplevel=True
+            )
 
         except Interrupted:
             self.logger.info('program interrupted')
+            self.panel.reset()
+            self.panel.center_text_at("External interrupt", line=1)
+        except ShellException:
+            self.logger.critical('unrecoverable error occurred, aborting application')
+            self.panel.reset()
+            self.panel.center_text_at("Fatal error", line=1)
+            self.panel.center_text_at("Application aborted", line=3)
+        else:
+            self.panel.reset()
+            self.panel.center_text_at("Application terminated", line=1)
+            self.panel.center_text_at("I'll be back", line=3)
+            self.logger.info('terminated')
+        finally:
+            self.panel.leds_off()
 
-        self.panel.reset()
-        self.logger.info('terminated')
-
-    def sublevel(self, title, choices):
+    def sublevel(self, title, choices, is_toplevel=False):
         """ Displays a navigation sub-level page with an action spinner, and executes
         the selected ones until the user chooses to return from this level
         by using the ESC/Cancel key.
 
         :param str title: the title displayed for the sub-level page
         :param iterable choices: the selector choices specification (see `Selector` class documentation)
+        :param bool is_toplevel: True if this level is the top-most one
         """
         self.logger.info('entering sub-level "%s"', title)
 
         sel = Selector(
             title=title,
             choices=choices,
-            panel=self.panel
+            panel=self.panel,
+            cancelable=not is_toplevel
         )
 
         try:
@@ -128,7 +140,10 @@ class TopLevel(object):
             raise
 
         except Exception as e:
-            self.logger.info('exiting from sub-level "%s" with unexpected error %s', title, e)
+            self.logger.exception(e)
+            self.logger.error('exiting from sub-level "%s" due to unexpected error', title)
+            if is_toplevel:
+                raise ShellException(e)
 
         else:
             self.logger.info('exiting from sub-level "%s"', title)
@@ -153,24 +168,28 @@ class TopLevel(object):
             )
         )
 
+    def _system_action(self, title, command):
+        if self.panel.countdown(title, delay=3, can_abort=True):
+            self.logger.info("executing : %s", command)
+            if not self._is_root:
+                command = 'sudo ' + command
+            subprocess.call('(sleep 1 ; %s) &' % command, shell=True)
+
     def system_functions(self):
         self.sublevel(
             title='System',
             choices=(
-                ('About', self.display_about_modal),
                 ('Reset Youpi', Reset(self.panel, self.arm, self.logger).execute),
                 ('Disable Youpi', Disable(self.panel, self.arm, self.logger).execute),
+                ('Restart app.', lambda: self._system_action(
+                    'Application restart', 'systemctl restart youpi2-shell.service'
+                )),
                 ('Shutdown', self.shutdown),
             )
         )
 
     def display_about_modal(self):
         self.display_about()
-
-    def _shutdown_action(self, title, command):
-        if self.panel.countdown(title, delay=3, can_abort=True):
-            self.logger.info("executing : %s", command)
-            subprocess.call('(sleep 1 ; sudo %s) &' % command, shell=True)
 
     def _quit_to_shell(self):
         self.logger.info('"quit to shell" requested')
@@ -180,9 +199,9 @@ class TopLevel(object):
 
     def shutdown(self):
         choices = [
-            ('Reboot', lambda: self._shutdown_action('Reboot', 'reboot')),
-            ('Halt', lambda: self._shutdown_action('Halt', 'halt')),
-            ('Power off', lambda: self._shutdown_action('Power off', 'poweroff')),
+            ('Power off', lambda: self._system_action('Power off', 'systemctl poweroff')),
+            ('Reboot', lambda: self._system_action('Reboot', 'systemctl reboot')),
+            # ('Halt', lambda: self._system_action('Halt', 'systemctl halt')),
         ]
         if self.can_quit_to_shell:
             choices.append(('Quit to shell', self._quit_to_shell))
@@ -191,6 +210,10 @@ class TopLevel(object):
             title='Shutdown',
             choices=choices
         )
+
+
+class ShellException(Exception):
+    pass
 
 
 def main():
