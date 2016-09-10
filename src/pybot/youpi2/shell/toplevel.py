@@ -15,7 +15,6 @@ import os
 from pybot.core import log
 
 from nros.core.commons import get_bus, get_node_proxy, get_node_interface
-from nros.core.node import get_bus_config
 
 from nros.youpi2 import SERVICE_OBJECT_PATH, ARM_CONTROL_INTERFACE_NAME
 
