@@ -14,11 +14,20 @@ setup(
     author='Eric Pascual',
     author_email='eric@pobot.org',
     install_requires=['pybot-youpi2>=0.23', 'pybot-lcd-fuse>=0.20.1'],
+    extras_require={
+        'systemd': ['pybot-systemd']
+    },
     download_url='https://github.com/Pobot/PyBot',
     description='Youpi2 arm runtime shell',
     entry_points={
         'console_scripts': [
             'youpi2-shell = pybot.youpi2.shell.toplevel:main',
+            # optionals
+            "youpi2-shell-systemd-install = pybot.youpi2.shell.setup.systemd:install_service [systemd]",
+            "youpi2-shell-systemd-remove = pybot.youpi2.shell.setup.systemd:remove_service [systemd]",
         ]
+    },
+    package_data={
+        'pybot.youpi2.shell.setup': ['pkg_data/*']
     }
 )
