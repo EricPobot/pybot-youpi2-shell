@@ -16,16 +16,16 @@ class Reset(Action):
 
         self.panel.clear()
         self.panel.display_splash(
-            """Place Youpi in
-            home position, then
-            press a button.
+            """Place Youpi near
+            its home position,
+            then press a button.
         """, delay=0)
         self.panel.wait_for_key()
         self.panel.leds_off()
 
         try:
             self.panel.please_wait("Seeking origins")
-            self.arm.seek_origins(YoupiArm.MOTORS_ALL)
+            self.arm.seek_origins(YoupiArm.MOTORS_ALL, timeout=YoupiArm.MOVE_TIMEOUT * 2)
 
             self.panel.please_wait("Calibrating gripper")
             self.arm.calibrate_gripper(wait=True)
@@ -43,5 +43,5 @@ class Disable(Action):
         self.panel.clear()
         self.panel.display_splash("""
             Youpi motors
-            are disabled
+            are disabled now.
         """)
