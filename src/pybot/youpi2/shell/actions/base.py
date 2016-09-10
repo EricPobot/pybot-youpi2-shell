@@ -34,7 +34,7 @@ class Action(object):
         self.panel.reset()
         self.panel.center_text_at("Unexpected error", line=1)
 
-        msg = str(e)
+        msg = e.message.strip().split('\n')[-1]
         self.panel.center_text_at(msg[:20], line=3)
         self.panel.center_text_at(msg[20:40], line=4)
 
