@@ -91,8 +91,8 @@ class TopLevel(object):
             self.sublevel(
                 'Main menu',
                 choices=(
-                    ('Mode', self.mode_selector),
-                    ('System', self.system_functions),
+                    ('Mode select', self.mode_selector),
+                    ('System functions', self.system_functions),
                     ('About', self.display_about_modal),
                     ('Info', self.display_system_info),
                 ),
@@ -157,10 +157,10 @@ class TopLevel(object):
         self.sublevel(
             title='Select mode',
             choices=(
-                ('Demo', DemoAuto(self.panel, self.arm, self.logger).execute),
-                ('Gamepad', GamepadControl(self.panel, self.arm, self.logger).execute),
+                ('Automatic demo', DemoAuto(self.panel, self.arm, self.logger).execute),
+                ('Gamepad control', GamepadControl(self.panel, self.arm, self.logger).execute),
                 ('Minitel UI', MinitelUi(self.panel, self.arm, self.logger).execute),
-                ('Network', self.network_control),
+                ('Network control', self.network_control),
             )
         )
 
@@ -184,8 +184,8 @@ class TopLevel(object):
         self.sublevel(
             title='System',
             choices=(
-                ('Reset Youpi', Reset(self.panel, self.arm, self.logger).execute),
-                ('Disable Youpi', Disable(self.panel, self.arm, self.logger).execute),
+                ('Reset arm', Reset(self.panel, self.arm, self.logger).execute),
+                ('Disable arm', Disable(self.panel, self.arm, self.logger).execute),
                 ('Restart app.', lambda: self._system_action(
                     'Application restart', 'systemctl restart youpi2-shell.service'
                 )),
