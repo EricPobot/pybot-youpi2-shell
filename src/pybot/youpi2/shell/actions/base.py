@@ -36,7 +36,7 @@ class Action(object):
 
         msg = str(e)
         self.panel.center_text_at(msg[:20], line=3)
-        self.panel.center_text_at(msg[20:], line=4)
+        self.panel.center_text_at(msg[20:40], line=4)
 
         self.panel.write_at(chr(CH_OK), line=1, col=self.panel.width)
         self.panel.wait_for_key(Keys.OK)

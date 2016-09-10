@@ -24,10 +24,10 @@ class Reset(Action):
         self.panel.leds_off()
 
         try:
-            self.panel.display_splash("Seeking origins\n...", delay=0)
+            self.panel.please_wait("Seeking origins")
             self.arm.seek_origins(YoupiArm.MOTORS_ALL)
 
-            self.panel.display_splash("Calibrating gripper\n...", delay=0)
+            self.panel.please_wait("Calibrating gripper")
             self.arm.calibrate_gripper(wait=True)
         except Exception as e:
             self.display_error(e)
