@@ -14,6 +14,11 @@ import os
 
 from pybot.core import log
 
+from nros.core.commons import get_bus, get_node_proxy, get_node_interface
+from nros.core.node import get_bus_config
+
+from nros.youpi2 import SERVICE_OBJECT_PATH, ARM_CONTROL_INTERFACE_NAME
+
 from pybot.youpi2.shell.__version__ import version
 
 from pybot.youpi2.ctlpanel.widgets import Selector
@@ -52,8 +57,9 @@ class TopLevel(object):
         self.can_quit_to_shell = can_quit_to_shell
 
         self.panel = ControlPanel(FileSystemDevice('/mnt/lcdfs'))
-        # TODO
-        self.arm = None
+
+        arm_node = get_node_proxy(get_bus(), 'nros.youpi2', object_path=SERVICE_OBJECT_PATH)
+        self.arm = get_node_interface(arm_node, interface_name=ARM_CONTROL_INTERFACE_NAME)
 
     def display_about(self):
         DisplayAbout(self.panel, None, version=version).execute()
