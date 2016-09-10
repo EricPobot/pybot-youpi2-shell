@@ -8,6 +8,7 @@ from pybot.core import log
 
 from pybot.lcd.lcd_i2c import LCD03
 from pybot.youpi2.ctlpanel import Keys
+from pybot.youpi2.ctlpanel.widgets import CH_OK
 
 __author__ = 'Eric Pascual'
 
@@ -26,6 +27,19 @@ class Action(object):
 
     def execute(self):
         raise NotImplementedError()
+
+    def display_error(self, e):
+        self.logger.error(e)
+
+        self.panel.reset()
+        self.panel.center_text_at("Unexpected error", line=1)
+
+        msg = str(e)
+        self.panel.center_text_at(msg[:20], line=3)
+        self.panel.center_text_at(msg[20:], line=4)
+
+        self.panel.write_at(chr(CH_OK), line=1, col=self.panel.width)
+        self.panel.wait_for_key(Keys.OK)
 
 
 class ExternalProcessAction(Action):
