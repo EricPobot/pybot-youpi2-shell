@@ -23,7 +23,7 @@ class Action(object):
         self.logger = parent_logger.getChild(self.__class__.__name__)
 
         for k, v in kwargs.iteritems():
-            setattr(self, k, v)
+            setattr(self, '_' + k, v)
 
     def execute(self):
         raise NotImplementedError()
@@ -64,6 +64,8 @@ class ExternalProcessAction(Action):
             self.logger.info('PID=%d', app_proc.pid)
 
         except OSError as e:
+            self.logger.exception(e)
+            
             self.panel.clear()
             self.panel.center_text_at("ERROR", line=1)
             msg = str(e)
