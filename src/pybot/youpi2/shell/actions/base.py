@@ -39,7 +39,7 @@ class Action(object):
         self.panel.center_text_at(msg[20:40], line=4)
 
         self.panel.write_at(chr(CH_OK), line=1, col=self.panel.width)
-        self.panel.wait_for_key(Keys.OK)
+        self.panel.wait_for_key(Keys.OK, blink=True)
 
 
 class ExternalProcessAction(Action):
@@ -70,7 +70,7 @@ class ExternalProcessAction(Action):
             self.panel.write_at(msg[:20], line=3)
             self.panel.write_at(msg[20:40], line=4)
             self.panel.write_at(chr(LCD03.CH_OK), 1, self.panel.width)
-            self.panel.wait_for_key([Keys.OK])
+            self.panel.wait_for_key(Keys.OK, blink=True)
 
         else:
             self.logger.info('watching for keypad actions...')
