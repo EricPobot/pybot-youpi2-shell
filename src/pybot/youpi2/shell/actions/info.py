@@ -13,17 +13,29 @@ __all__ = ['DisplayAbout', 'DisplaySystemInfo']
 
 
 class DisplayAbout(Action):
-    version = 'none'
+    _version = 'none'
+    _long_text = False
 
     def execute(self):
-        self.panel.display_splash("""
-        Youpi 2.0 Shell
-        by POBOT
+        text = [
+            "Youpi 2.0 Shell",
+            "by POBOT",
+            "",
+            "version %(version)s" % {
+                'version': self._version.split('+')[0]
+            }
+        ]
+        if self._long_text:
+            text += [
+                "",
+                "author: E. PASCUAL",
+                "",
+                "lang: Python",
+                "",
+                "RaspberryPi 3 inside",
+            ]
 
-        version %(version)s
-        """.strip() % {
-            'version': self.version.split('+')[0]
-        })
+        self.panel.scroll_text(text)
 
 
 class DisplaySystemInfo(Action):

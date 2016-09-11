@@ -60,9 +60,6 @@ class TopLevel(object):
         arm_node = get_node_proxy(get_bus(), 'nros.youpi2', object_path=SERVICE_OBJECT_PATH)
         self.arm = get_node_interface(arm_node, interface_name=ARM_CONTROL_INTERFACE_NAME)
 
-    def display_about(self):
-        DisplayAbout(self.panel, None, version=version).execute()
-
     def display_system_info(self):
         DisplaySystemInfo(self.panel, None).execute()
 
@@ -85,7 +82,7 @@ class TopLevel(object):
         self.logger.info('version: %s', version)
         self.logger.info('-' * 40)
         self.panel.reset()
-        self.display_about()
+        DisplayAbout(self.panel, None, version=version, long_text=False).execute()
 
         try:
             self.sublevel(
@@ -93,7 +90,7 @@ class TopLevel(object):
                 choices=(
                     ('Mode select', self.mode_selector),
                     ('System functions', self.system_functions),
-                    ('About', self.display_about_modal),
+                    ('About', self.display_about_long),
                     ('Info', self.display_system_info),
                 ),
                 is_toplevel=True
@@ -194,8 +191,8 @@ class TopLevel(object):
             )
         )
 
-    def display_about_modal(self):
-        self.display_about()
+    def display_about_long(self):
+        DisplayAbout(self.panel, None, version=version, long_text=True).execute()
 
     def _quit_to_shell(self):
         self.logger.info('"quit to shell" requested')
