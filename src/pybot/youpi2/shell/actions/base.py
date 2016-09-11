@@ -15,9 +15,10 @@ __author__ = 'Eric Pascual'
 
 class Action(object):
     """ Root class for actions. """
-    def __init__(self, panel, arm, parent_logger=None, **kwargs):
+    def __init__(self, panel, arm, terminate_event, parent_logger=None, **kwargs):
         self.panel = panel
         self.arm = arm
+        self.terminate_event = terminate_event
 
         parent_logger = parent_logger or log.getLogger()
         self.logger = parent_logger.getChild(self.__class__.__name__)
@@ -65,7 +66,7 @@ class ExternalProcessAction(Action):
 
         except OSError as e:
             self.logger.exception(e)
-            
+
             self.panel.clear()
             self.panel.center_text_at("ERROR", line=1)
             msg = str(e)
@@ -76,7 +77,11 @@ class ExternalProcessAction(Action):
 
         else:
             self.logger.info('watching for keypad actions...')
-            while True:
+            while not self.terminate_event.is_set():
+                if app_proc.poll() is not None:
+                    self.logger.info('terminated with rc=%d', app_proc.returncode)
+                    return
+
                 keys = self.panel.get_keys()
                 if keys == exit_key_combo:
                     self.logger.info('exit action caught')
