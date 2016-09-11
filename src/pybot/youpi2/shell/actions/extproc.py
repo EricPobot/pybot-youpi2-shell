@@ -28,5 +28,5 @@ class BrowserlUi(ExternalProcessAction):
 
 
 class DemoAuto(ExternalProcessAction):
-    COMMAND = "youpi2-demo-auto --pnldev /mnt/lcdfs"
+    COMMAND = "/home/pi/.local/bin/youpi2-demo-auto"
     TITLE = "Automatic demo mode"
