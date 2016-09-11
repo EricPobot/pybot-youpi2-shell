@@ -28,7 +28,7 @@ class Reset(Action):
             self.arm.seek_origins(YoupiArm.MOTORS_ALL, timeout=YoupiArm.TimeOuts.DEFAULT * YoupiArm.MOTORS_COUNT)
 
             self.panel.please_wait("Calibrating gripper")
-            self.arm.calibrate_gripper(wait=True, timeout=YoupiArm.TimeOuts.CALIBRATE_GRIPPER)
+            self.arm.calibrate_gripper(True, timeout=YoupiArm.TimeOuts.CALIBRATE_GRIPPER)
         except Exception as e:
             self.display_error(e)
         else:
