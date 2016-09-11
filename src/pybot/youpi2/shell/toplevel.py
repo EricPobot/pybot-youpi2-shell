@@ -156,9 +156,9 @@ class TopLevel(object):
         self.sublevel(
             title='Select mode',
             choices=(
-                ('Automatic demo', DemoAuto(self.panel, self.arm, self.logger).execute),
-                ('Gamepad control', GamepadControl(self.panel, self.arm, self.logger).execute),
-                ('Minitel UI', MinitelUi(self.panel, self.arm, self.logger).execute),
+                ('Automatic demo', DemoAuto(self.panel, self.arm, self._terminate_event, self.logger).execute),
+                ('Gamepad control', GamepadControl(self.panel, self.arm, self._terminate_event, self.logger).execute),
+                ('Minitel UI', MinitelUi(self.panel, self.arm, self._terminate_event, self.logger).execute),
                 ('Network control', self.network_control),
             )
         )
@@ -167,8 +167,8 @@ class TopLevel(object):
         self.sublevel(
             title='Network mode',
             choices=(
-                ('Web services', WebServicesControl(self.panel, self.arm, self.logger).execute),
-                ('Browser UI', BrowserlUi(self.panel, self.arm, self.logger).execute),
+                ('Web services', WebServicesControl(self.panel, self.arm, self._terminate_event, self.logger).execute),
+                ('Browser UI', BrowserlUi(self.panel, self.arm, self._terminate_event, self.logger).execute),
             )
         )
 
