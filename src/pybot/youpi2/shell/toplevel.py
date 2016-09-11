@@ -182,7 +182,7 @@ class TopLevel(object):
         self.sublevel(
             title='System',
             choices=(
-                ('Reset arm', Reset(self.panel, self.arm, self.logger).execute),
+                ('Calibrate arm', Calibrate(self.panel, self.arm, self.logger).execute),
                 ('Disable arm', Disable(self.panel, self.arm, self.logger).execute),
                 ('Restart app.', lambda: self._system_action(
                     'Application restart', 'systemctl restart youpi2-shell.service'
