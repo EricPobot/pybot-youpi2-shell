@@ -53,7 +53,7 @@ class TopLevel(object):
 
         self._is_root = os.getuid() == 0
 
-        self._terminate_event = threading.Event()
+        self.terminate_event = threading.Event()
         self.can_quit_to_shell = can_quit_to_shell
 
         self.panel = ControlPanel(FileSystemDevice('/mnt/lcdfs'))
@@ -62,7 +62,7 @@ class TopLevel(object):
         self.arm = get_node_interface(arm_node, interface_name=ARM_CONTROL_INTERFACE_NAME)
 
     def display_system_info(self):
-        DisplaySystemInfo(self.panel, self.arm, self._terminate_event).execute()
+        DisplaySystemInfo(self).execute()
 
     def _terminate_sig_handler(self, sig, frame):
         self.logger.info("signal %s received", {
@@ -71,7 +71,7 @@ class TopLevel(object):
                 signal.SIGKILL: 'SIGKILL',
             }.get(sig, str(sig))
         )
-        self._terminate_event.set()
+        self.terminate_event.set()
         self.panel.terminate()
 
     def run(self):
@@ -83,7 +83,7 @@ class TopLevel(object):
         self.logger.info('version: %s', version)
         self.logger.info('-' * 40)
         self.panel.reset()
-        DisplayAbout(self.panel, self.arm, self._terminate_event, version=version, long_text=False).execute()
+        DisplayAbout(self, version=version, long_text=False).execute()
 
         try:
             self.sublevel(
@@ -134,7 +134,7 @@ class TopLevel(object):
         )
 
         try:
-            while not self._terminate_event.is_set():
+            while not self.terminate_event.is_set():
                 sel.display()
                 if sel.handle_choice():
                     return
@@ -156,9 +156,9 @@ class TopLevel(object):
         self.sublevel(
             title='Select mode',
             choices=(
-                ('Automatic demo', DemoAuto(self.panel, self.arm, self._terminate_event, self.logger).execute),
-                ('Gamepad control', GamepadControl(self.panel, self.arm, self._terminate_event, self.logger).execute),
-                ('Minitel UI', MinitelUi(self.panel, self.arm, self._terminate_event, self.logger).execute),
+                ('Automatic demo', DemoAuto(self, self.logger).execute),
+                ('Gamepad control', GamepadControl(self, self.logger).execute),
+                ('Minitel UI', MinitelUi(self, self.logger).execute),
                 ('Network control', self.network_control),
             )
         )
@@ -167,8 +167,8 @@ class TopLevel(object):
         self.sublevel(
             title='Network mode',
             choices=(
-                ('Web services', WebServicesControl(self.panel, self.arm, self._terminate_event, self.logger).execute),
-                ('Browser UI', BrowserlUi(self.panel, self.arm, self._terminate_event, self.logger).execute),
+                ('Web services', WebServicesControl(self, self.logger).execute),
+                ('Browser UI', BrowserlUi(self, self.logger).execute),
             )
         )
 
@@ -183,8 +183,8 @@ class TopLevel(object):
         self.sublevel(
             title='System',
             choices=(
-                ('Calibrate arm', Calibrate(self.panel, self.arm, self._terminate_event, self.logger).execute),
-                ('Disable arm', Disable(self.panel, self.arm, self._terminate_event, self.logger).execute),
+                ('Calibrate arm', Calibrate(self, self.logger).execute),
+                ('Disable arm', Disable(self, self.logger).execute),
                 ('Restart app.', lambda: self._system_action(
                     'Application restart', 'systemctl restart youpi2-shell.service'
                 )),
@@ -193,7 +193,7 @@ class TopLevel(object):
         )
 
     def display_about_long(self):
-        DisplayAbout(self.panel, self.arm, self._terminate_event, version=version, long_text=True).execute()
+        DisplayAbout(self, version=version, long_text=True).execute()
 
     def _quit_to_shell(self):
         self.logger.info('"quit to shell" requested')
