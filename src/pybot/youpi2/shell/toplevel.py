@@ -102,16 +102,17 @@ class TopLevel(object):
         except Interrupted:
             self.logger.info('program interrupted')
             self.panel.reset()
-            self.panel.center_text_at("External interrupt", line=1)
+            self.panel.center_text_at("External interrupt", line=2)
+            self.panel.center_text_at("received", line=3)
         except ShellException:
             self.logger.critical('unrecoverable error occurred, aborting application')
             self.panel.reset()
-            self.panel.center_text_at("Fatal error", line=1)
+            self.panel.center_text_at("Fatal error", line=2)
             self.panel.center_text_at("Application aborted", line=3)
         else:
             self.panel.reset()
-            self.panel.center_text_at("Application terminated", line=1)
-            self.panel.center_text_at("I'll be back", line=3)
+            self.panel.center_text_at("Application terminated", line=2)
+            self.panel.center_text_at("I'll be back...", line=3)
             self.logger.info('terminated')
         finally:
             self.panel.leds_off()
