@@ -3,6 +3,7 @@
 import shlex
 import subprocess
 import time
+from threading import Event
 
 from pybot.core import log
 
@@ -18,6 +19,9 @@ class Action(object):
     def __init__(self, panel, arm, terminate_event, parent_logger=None, **kwargs):
         self.panel = panel
         self.arm = arm
+
+        if terminate_event and not isinstance(terminate_event, Event):
+            raise TypeError('invalid type for terminate_event parameter')
         self.terminate_event = terminate_event
 
         parent_logger = parent_logger or log.getLogger()
