@@ -85,11 +85,15 @@ class ExternalProcessAction(Action):
                 keys = self.panel.get_keys()
                 if keys == exit_key_combo:
                     self.logger.info('exit action caught')
-                    self.logger.info('sending terminate signal to subprocess %d', app_proc.pid)
-                    app_proc.terminate()
-                    self.logger.info('waiting for completion')
-                    app_proc.wait()
-                    self.logger.info('terminated with rc=%d', app_proc.returncode)
-                    return
+                    break
 
                 time.sleep(0.2)
+
+            # If here, either we got a shell termination signal or the exit combo has
+            # been used. In either case we need to stop our child process and wait for
+            # its termination.
+            self.logger.info('sending terminate signal to subprocess %d', app_proc.pid)
+            app_proc.terminate()
+            self.logger.info('waiting for completion')
+            app_proc.wait()
+            self.logger.info('terminated with rc=%d', app_proc.returncode)
