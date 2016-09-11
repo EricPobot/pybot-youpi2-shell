@@ -9,7 +9,7 @@ __author__ = 'Eric Pascual'
 _all__ = ['Reset', 'Disable']
 
 
-class Reset(Action):
+class Calibrate(Action):
     def execute(self):
         # disable Youpi motors so that the arm can be placed near the home position manually
         self.arm.hard_hi_Z()
