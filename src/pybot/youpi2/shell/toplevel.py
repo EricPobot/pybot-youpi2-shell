@@ -27,7 +27,7 @@ from pybot.youpi2.ctlpanel.devices.fs import FileSystemDevice
 
 from pybot.youpi2.shell.actions.info import *
 from pybot.youpi2.shell.actions.extproc import *
-from pybot.youpi2.shell.actions.youpi_maint import *
+from pybot.youpi2.shell.actions.system import *
 
 __author__ = 'Eric Pascual'
 
