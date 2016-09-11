@@ -18,6 +18,7 @@ class Calibrate(Action):
         self.panel.display_splash(
             """Place Youpi near
             its home position,
+
             then press a button.
         """, delay=0)
         self.panel.wait_for_key()
@@ -32,7 +33,7 @@ class Calibrate(Action):
         except Exception as e:
             self.display_error(e)
         else:
-            self.panel.display_splash('Complete.')
+            self.panel.display_splash(['', 'Complete.'])
 
 
 class Disable(Action):
@@ -44,4 +45,14 @@ class Disable(Action):
         self.panel.display_splash("""
             Youpi motors
             are disabled now.
+        """)
+
+
+class Initialize(Action):
+    def execute(self):
+        self.arm.initialize()
+
+        self.panel.clear()
+        self.panel.display_splash("""
+            Arm reinitialized.
         """)

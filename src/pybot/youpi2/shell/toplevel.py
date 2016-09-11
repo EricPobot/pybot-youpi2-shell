@@ -185,6 +185,7 @@ class TopLevel(object):
             choices=(
                 ('Calibrate arm', Calibrate(self, self.logger).execute),
                 ('Disable arm', Disable(self, self.logger).execute),
+                ('Re-init arm', Initialize(self, self.logger).execute),
                 ('Restart app.', lambda: self._system_action(
                     'Application restart', 'systemctl restart youpi2-shell.service'
                 )),
