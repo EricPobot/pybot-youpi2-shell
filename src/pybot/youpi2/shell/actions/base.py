@@ -29,7 +29,7 @@ class Action(object):
         raise NotImplementedError()
 
     def display_error(self, e):
-        self.logger.error(e)
+        self.logger.exception(e)
 
         self.panel.reset()
         self.panel.center_text_at("Unexpected error", line=1)
