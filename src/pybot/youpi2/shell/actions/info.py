@@ -31,11 +31,10 @@ class DisplayAbout(Action):
                 "author: E. PASCUAL",
                 "",
                 "lang: Python",
-                "",
                 "RaspberryPi 3 inside",
             ]
 
-        self.panel.scroll_text(text)
+        self.panel.scroll_text(text, from_bottom=False)
 
 
 class DisplaySystemInfo(Action):
