@@ -11,7 +11,7 @@ _all__ = ['Reset', 'Disable']
 
 class Reset(Action):
     def execute(self):
-        # disable Youpi motors
+        # disable Youpi motors so that the arm can be placed near the home position manually
         self.arm.hard_hi_Z()
 
         self.panel.clear()
@@ -25,10 +25,10 @@ class Reset(Action):
 
         try:
             self.panel.please_wait("Seeking origins")
-            self.arm.seek_origins(YoupiArm.MOTORS_ALL, timeout=YoupiArm.MOVE_TIMEOUT * 2)
+            self.arm.seek_origins(YoupiArm.MOTORS_ALL, timeout=YoupiArm.TimeOuts.DEFAULT * YoupiArm.MOTORS_COUNT)
 
             self.panel.please_wait("Calibrating gripper")
-            self.arm.calibrate_gripper(wait=True)
+            self.arm.calibrate_gripper(wait=True, timeout=YoupiArm.TimeOuts.CALIBRATE_GRIPPER)
         except Exception as e:
             self.display_error(e)
         else:
