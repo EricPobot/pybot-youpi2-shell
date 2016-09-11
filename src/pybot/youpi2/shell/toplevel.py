@@ -11,6 +11,7 @@ import signal
 import time
 import argparse
 import os
+import threading
 
 from pybot.core import log
 
@@ -52,7 +53,7 @@ class TopLevel(object):
 
         self._is_root = os.getuid() == 0
 
-        self._active = True
+        self._terminate_event = threading.Event()
         self.can_quit_to_shell = can_quit_to_shell
 
         self.panel = ControlPanel(FileSystemDevice('/mnt/lcdfs'))
@@ -61,7 +62,7 @@ class TopLevel(object):
         self.arm = get_node_interface(arm_node, interface_name=ARM_CONTROL_INTERFACE_NAME)
 
     def display_system_info(self):
-        DisplaySystemInfo(self.panel, None).execute()
+        DisplaySystemInfo(self.panel, self.arm, self._terminate_event).execute()
 
     def _terminate_sig_handler(self, sig, frame):
         self.logger.info("signal %s received", {
@@ -70,7 +71,7 @@ class TopLevel(object):
                 signal.SIGKILL: 'SIGKILL',
             }.get(sig, str(sig))
         )
-        self._active = False
+        self._terminate_event.set()
         self.panel.terminate()
 
     def run(self):
@@ -82,7 +83,7 @@ class TopLevel(object):
         self.logger.info('version: %s', version)
         self.logger.info('-' * 40)
         self.panel.reset()
-        DisplayAbout(self.panel, None, version=version, long_text=False).execute()
+        DisplayAbout(self.panel, self.arm, self._terminate_event, version=version, long_text=False).execute()
 
         try:
             self.sublevel(
@@ -133,7 +134,7 @@ class TopLevel(object):
         )
 
         try:
-            while self._active:
+            while not self._terminate_event.is_set():
                 sel.display()
                 if sel.handle_choice():
                     return
@@ -182,8 +183,8 @@ class TopLevel(object):
         self.sublevel(
             title='System',
             choices=(
-                ('Calibrate arm', Calibrate(self.panel, self.arm, self.logger).execute),
-                ('Disable arm', Disable(self.panel, self.arm, self.logger).execute),
+                ('Calibrate arm', Calibrate(self.panel, self.arm, self._terminate_event, self.logger).execute),
+                ('Disable arm', Disable(self.panel, self.arm, self._terminate_event, self.logger).execute),
                 ('Restart app.', lambda: self._system_action(
                     'Application restart', 'systemctl restart youpi2-shell.service'
                 )),
@@ -192,7 +193,7 @@ class TopLevel(object):
         )
 
     def display_about_long(self):
-        DisplayAbout(self.panel, None, version=version, long_text=True).execute()
+        DisplayAbout(self.panel, self.arm, self._terminate_event, version=version, long_text=True).execute()
 
     def _quit_to_shell(self):
         self.logger.info('"quit to shell" requested')
