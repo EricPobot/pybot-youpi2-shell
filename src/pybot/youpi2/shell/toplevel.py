@@ -44,12 +44,12 @@ _logging_config = log.get_logging_configuration({
 logging.config.dictConfig(_logging_config)
 
 
-class TopLevel(object):
+class TopLevel(log.LogMixin):
     SHUTDOWN = -9
     QUIT = -10
 
     def __init__(self, can_quit_to_shell=False):
-        self.logger = log.getLogger()
+        log.LogMixin.__init__(self)
 
         self._is_root = os.getuid() == 0
 

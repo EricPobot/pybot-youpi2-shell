@@ -13,18 +13,16 @@ from pybot.youpi2.ctlpanel.widgets import CH_OK
 __author__ = 'Eric Pascual'
 
 
-class Action(object):
+class Action(log.LogMixin):
     """ Root class for actions. """
     def __init__(self, owner, parent_logger=None, **kwargs):
         """
         :param TopLevel owner: the top level of he application
         """
+        log.LogMixin.__init__(self, parent=parent_logger, name=self.__class__.__name__)
         self.panel = owner.panel
         self.arm = owner.arm
         self.terminate_event = owner.terminate_event
-
-        parent_logger = parent_logger or log.getLogger()
-        self.logger = parent_logger.getChild(self.__class__.__name__)
 
         for k, v in kwargs.iteritems():
             setattr(self, '_' + k, v)
@@ -33,7 +31,7 @@ class Action(object):
         raise NotImplementedError()
 
     def display_error(self, e):
-        self.logger.exception(e)
+        self.log_exception(e)
 
         self.panel.reset()
         self.panel.center_text_at("Unexpected error", line=1)
@@ -61,14 +59,14 @@ class ExternalProcessAction(Action):
         time.sleep(3)
         self.panel.leds_off()
 
-        # start the demonstration as a child process
+        # start the action as a child process
         try:
-            self.logger.info('starting "%s" as subprocess', self.COMMAND)
+            self.log_info('starting "%s" as subprocess', self.COMMAND)
             app_proc = subprocess.Popen(shlex.split(self.COMMAND))
-            self.logger.info('PID=%d', app_proc.pid)
+            self.log_info('PID=%d', app_proc.pid)
 
         except OSError as e:
-            self.logger.exception(e)
+            self.log_exception(e)
 
             self.panel.clear()
             self.panel.center_text_at("ERROR", line=1)
@@ -79,15 +77,15 @@ class ExternalProcessAction(Action):
             self.panel.wait_for_key(Keys.OK, blink=True)
 
         else:
-            self.logger.info('watching for keypad actions...')
+            self.log_info('watching for keypad actions...')
             while not self.terminate_event.is_set():
                 if app_proc.poll() is not None:
-                    self.logger.info('terminated with rc=%d', app_proc.returncode)
+                    self.log_info('terminated with rc=%d', app_proc.returncode)
                     return
 
                 keys = self.panel.get_keys()
                 if keys == exit_key_combo:
-                    self.logger.info('exit action caught')
+                    self.log_info('exit action caught')
                     break
 
                 time.sleep(0.2)
@@ -95,8 +93,8 @@ class ExternalProcessAction(Action):
             # If here, either we got a shell termination signal or the exit combo has
             # been used. In either case we need to stop our child process and wait for
             # its termination.
-            self.logger.info('sending terminate signal to subprocess %d', app_proc.pid)
+            self.log_info('sending terminate signal to subprocess %d', app_proc.pid)
             app_proc.terminate()
-            self.logger.info('waiting for completion')
+            self.log_info('waiting for completion')
             app_proc.wait()
-            self.logger.info('terminated with rc=%d', app_proc.returncode)
+            self.log_info('terminated with rc=%d', app_proc.returncode)
