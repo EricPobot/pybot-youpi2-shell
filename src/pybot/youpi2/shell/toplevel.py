@@ -78,10 +78,8 @@ class TopLevel(log.LogMixin):
         signal.signal(signal.SIGTERM, self._terminate_sig_handler)
         signal.signal(signal.SIGINT, self._terminate_sig_handler)
 
-        self.logger.info('-' * 40)
-        self.logger.info('started')
-        self.logger.info('version: %s', version)
-        self.logger.info('-' * 40)
+        self.log_starting_banner(version=version)
+
         self.panel.reset()
         DisplayAbout(self, version=version, long_text=False).execute()
 
