@@ -165,8 +165,8 @@ class TopLevel(log.LogMixin):
         self.sublevel(
             title='Network mode',
             choices=(
-                ('Web services', WebServicesControl(self, self.logger).execute),
-                ('Browser UI', BrowserlUi(self, self.logger).execute),
+                ('HTTP server', HttpServer(self, self.logger).execute),
+                ('Minitel UI', MinitelUi(self, self.logger).execute),
             )
         )
 
