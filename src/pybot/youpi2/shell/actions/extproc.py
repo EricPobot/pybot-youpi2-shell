@@ -4,7 +4,7 @@ from pybot.youpi2.shell.actions.base import ExternalProcessAction
 
 __author__ = 'Eric Pascual'
 
-__all__ = ['MinitelUi', 'GamepadControl', 'WebServicesControl', 'BrowserlUi', 'DemoAuto']
+__all__ = ['MinitelUi', 'GamepadControl', 'HttpServer', 'DemoAuto']
 
 BIN_PATH = '/home/pi/.local/bin/'
 
@@ -19,14 +19,9 @@ class GamepadControl(ExternalProcessAction):
     TITLE = "Gamepad control mode"
 
 
-class WebServicesControl(ExternalProcessAction):
-    COMMAND = BIN_PATH + "youpi2-restapi"
-    TITLE = "Web Services mode"
-
-
-class BrowserlUi(ExternalProcessAction):
-    COMMAND = BIN_PATH + "youpi2-browser"
-    TITLE = "Web Services mode"
+class HttpServer(ExternalProcessAction):
+    COMMAND = BIN_PATH + "youpi2-http-server"
+    TITLE = "HTTP Server mode"
 
 
 class DemoAuto(ExternalProcessAction):
