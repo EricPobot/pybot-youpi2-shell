@@ -157,16 +157,7 @@ class TopLevel(log.LogMixin):
                 ('Automatic demo', DemoAuto(self, self.logger).execute),
                 ('Gamepad control', GamepadControl(self, self.logger).execute),
                 ('Minitel UI', MinitelUi(self, self.logger).execute),
-                ('Network control', self.network_control),
-            )
-        )
-
-    def network_control(self):
-        self.sublevel(
-            title='Network mode',
-            choices=(
                 ('HTTP server', HttpServer(self, self.logger).execute),
-                ('Minitel UI', MinitelUi(self, self.logger).execute),
             )
         )
 
