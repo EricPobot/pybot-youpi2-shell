@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from pybot.youpi2.model import YoupiArm
+from pybot.youpi2.ctlpanel.widgets import CH_OK, CH_CANCEL
+from pybot.youpi2.ctlpanel.keys import Keys
 
 from .base import Action
 
@@ -15,25 +17,32 @@ class Calibrate(Action):
         self.arm.hard_hi_Z()
 
         self.panel.clear()
-        self.panel.display_splash(
-            """Place Youpi near
-            its home position,
 
-            then press a button.
-        """, delay=0)
-        self.panel.wait_for_key()
+        self.panel.write_at(
+            chr(CH_CANCEL) + "Calibration".center(self.panel.width - 2) + chr(CH_OK),
+            line=1
+        )
+        self.panel.center_at("Put Youpi near", line=2)
+        self.panel.center_at("home position", line=3)
+        self.panel.center_at("OK:go - ESC:cancel", line=4)
+
+        key = self.panel.wait_for_key([Keys.OK, Keys.ESC])
         self.panel.leds_off()
 
-        try:
-            self.panel.please_wait("Seeking origins")
-            self.arm.seek_origins(YoupiArm.MOTORS_ALL, timeout=YoupiArm.TimeOuts.DEFAULT * YoupiArm.MOTORS_COUNT)
+        if key == Keys.OK:
+            try:
+                self.panel.please_wait("Seeking origins")
+                self.arm.seek_origins(YoupiArm.MOTORS_ALL, timeout=YoupiArm.TimeOuts.DEFAULT * YoupiArm.MOTORS_COUNT)
 
-            self.panel.please_wait("Calibrating gripper")
-            self.arm.calibrate_gripper(True, timeout=YoupiArm.TimeOuts.CALIBRATE_GRIPPER)
-        except Exception as e:
-            self.display_error(e)
+                self.panel.please_wait("Calibrating gripper")
+                self.arm.calibrate_gripper(True, timeout=YoupiArm.TimeOuts.CALIBRATE_GRIPPER)
+            except Exception as e:
+                self.display_error(e)
+            else:
+                self.panel.display_splash(['', 'Complete.'])
+
         else:
-            self.panel.display_splash(['', 'Complete.'])
+            self.panel.display_splash(['', 'Aborted.'])
 
 
 class Disable(Action):
