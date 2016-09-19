@@ -22,9 +22,9 @@ class Calibrate(Action):
             chr(CH_CANCEL) + "Calibration".center(self.panel.width - 2) + chr(CH_OK),
             line=1
         )
-        self.panel.center_at("Put Youpi near", line=2)
-        self.panel.center_at("home position", line=3)
-        self.panel.center_at("OK:go - ESC:cancel", line=4)
+        self.panel.center_text_at("Put Youpi near", line=2)
+        self.panel.center_text_at("home position", line=3)
+        self.panel.center_text_at("OK:go - ESC:cancel", line=4)
 
         key = self.panel.wait_for_key([Keys.OK, Keys.ESC])
         self.panel.leds_off()
