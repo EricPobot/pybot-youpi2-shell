@@ -81,9 +81,11 @@ class TopLevel(log.LogMixin):
         self.log_starting_banner(version=version)
 
         self.panel.reset()
+        self.log_info('displaying splash screen')
         DisplayAbout(self, version=version, long_text=False).execute()
 
         try:
+            self.log_info('displaying main menu')
             self.sublevel(
                 'Main menu',
                 choices=(
@@ -155,9 +157,9 @@ class TopLevel(log.LogMixin):
             title='Select mode',
             choices=(
                 ('Automatic demo', DemoAuto(self, self.logger).execute),
-                ('Gamepad control', GamepadControl(self, self.logger).execute),
                 ('Minitel UI', MinitelUi(self, self.logger).execute),
                 ('HTTP server', HttpServer(self, self.logger).execute),
+                ('Gamepad control', GamepadControl(self, self.logger).execute),
             )
         )
 
