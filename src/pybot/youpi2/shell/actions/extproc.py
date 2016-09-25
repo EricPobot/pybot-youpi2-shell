@@ -4,7 +4,7 @@ from pybot.youpi2.shell.actions.base import ExternalProcessAction
 
 __author__ = 'Eric Pascual'
 
-__all__ = ['MinitelUi', 'GamepadControl', 'HttpServer', 'DemoAuto']
+__all__ = ['MinitelUi', 'GamepadControl', 'HttpServer', 'DemoAuto', 'HanoiTowersDemo']
 
 BIN_PATH = '/home/pi/.local/bin/'
 
@@ -27,3 +27,8 @@ class HttpServer(ExternalProcessAction):
 class DemoAuto(ExternalProcessAction):
     COMMAND = BIN_PATH + "youpi2-demo-auto"
     TITLE = "Automatic demo mode"
+
+
+class HanoiTowersDemo(ExternalProcessAction):
+    COMMAND = BIN_PATH + "youpi2-hanoi"
+    TITLE = "Hanoi towers demo"
