@@ -32,10 +32,10 @@ class Calibrate(Action):
         if key == Keys.OK:
             try:
                 self.panel.please_wait("Seeking origins")
-                self.arm.seek_origins(YoupiArm.MOTORS_ALL, timeout=YoupiArm.TimeOuts.DEFAULT * YoupiArm.MOTORS_COUNT)
+                self.arm.seek_origins(YoupiArm.MOTORS_ALL)
 
                 self.panel.please_wait("Calibrating gripper")
-                self.arm.calibrate_gripper(True, timeout=YoupiArm.TimeOuts.CALIBRATE_GRIPPER)
+                self.arm.calibrate_gripper()
             except Exception as e:
                 self.display_error(e)
             else:
