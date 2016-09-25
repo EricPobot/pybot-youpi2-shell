@@ -15,9 +15,7 @@ import threading
 
 from pybot.core import log
 
-from nros.core.commons import get_bus, get_node_proxy, get_node_interface
-
-from nros.youpi2 import SERVICE_OBJECT_PATH, ARM_CONTROL_INTERFACE_NAME
+from nros.youpi2.client import ArmClient
 
 from pybot.youpi2.shell.__version__ import version
 
@@ -43,6 +41,9 @@ _logging_config = log.get_logging_configuration({
 })
 logging.config.dictConfig(_logging_config)
 
+LCDFS_MOUNT_POINT = '/mnt/lcdfs'
+ARM_NODE_NAME = 'nros.youpi2'
+
 
 class TopLevel(log.LogMixin):
     SHUTDOWN = -9
@@ -56,10 +57,9 @@ class TopLevel(log.LogMixin):
         self.terminate_event = threading.Event()
         self.can_quit_to_shell = can_quit_to_shell
 
-        self.panel = ControlPanel(FileSystemDevice('/mnt/lcdfs'))
+        self.panel = ControlPanel(FileSystemDevice(LCDFS_MOUNT_POINT))
 
-        arm_node = get_node_proxy(get_bus(), 'nros.youpi2', object_path=SERVICE_OBJECT_PATH)
-        self.arm = get_node_interface(arm_node, interface_name=ARM_CONTROL_INTERFACE_NAME)
+        self.arm = ArmClient(ARM_NODE_NAME)
 
     def display_system_info(self):
         DisplaySystemInfo(self).execute()
@@ -109,7 +109,7 @@ class TopLevel(log.LogMixin):
             self.panel.center_text_at("Application aborted", line=3)
         else:
             self.panel.reset()
-            self.panel.center_text_at("Application terminated", line=2)
+            self.panel.center_text_at("Application exited", line=2)
             self.panel.center_text_at("I'll be back...", line=3)
             self.logger.info('terminated')
         finally:
