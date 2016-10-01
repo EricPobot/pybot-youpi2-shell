@@ -15,11 +15,20 @@ __author__ = 'Eric Pascual'
 
 class Action(log.LogMixin):
     """ Root class for actions. """
-    def __init__(self, owner, parent_logger=None, **kwargs):
+    def __init__(self, owner, parent_logger=None, log_level=None, **kwargs):
         """
         :param TopLevel owner: the top level of he application
+        :param parent_logger: the (optional) parent logger
+        :param log_level: the logging level (defaulted to parent's one or to INFO as fallback)
+        :param kwargs: stored as underscore prefixed attributes
         """
-        log.LogMixin.__init__(self, parent=parent_logger, name=self.__class__.__name__)
+        if log_level is None:
+            if parent_logger:
+                log_level = parent_logger.getEffectiveLevel()
+            else:
+                log_level = log.INFO
+
+        log.LogMixin.__init__(self, parent=parent_logger, name=self.__class__.__name__, level=log_level)
         self.panel = owner.panel
         self.arm = owner.arm
         self.terminate_event = owner.terminate_event

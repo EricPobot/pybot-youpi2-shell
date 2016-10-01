@@ -13,7 +13,7 @@ import argparse
 import os
 import threading
 
-from pybot.core import log
+from pybot.core import log, cli
 
 from nros.youpi2.client import ArmClient
 
@@ -49,8 +49,8 @@ class TopLevel(log.LogMixin):
     SHUTDOWN = -9
     QUIT = -10
 
-    def __init__(self, can_quit_to_shell=False):
-        log.LogMixin.__init__(self)
+    def __init__(self, can_quit_to_shell=False, verbose=False, debug=False):
+        log.LogMixin.__init__(self, level=log.DEBUG if verbose else log.INFO)
 
         self._is_root = os.getuid() == 0
 
@@ -158,10 +158,10 @@ class TopLevel(log.LogMixin):
         self.sublevel(
             title='Select mode',
             choices=(
-                ('Automatic demo', DemoAuto(self, self.logger).execute),
-                ('Hanoi demo', HanoiTowersDemo(self, self.logger).execute),
-                ('Minitel UI', MinitelUi(self, self.logger).execute),
-                ('HTTP server', HttpServer(self, self.logger).execute),
+                ('Automatic demo', DemoAuto(self, parent_logger=self.logger).execute),
+                ('Hanoi demo', HanoiTowersDemo(self, parent_logger=self.logger).execute),
+                ('Minitel UI', MinitelUi(self, parent_logger=self.logger).execute),
+                ('HTTP server', HttpServer(self, parent_logger=self.logger).execute),
                 # ('Gamepad control', GamepadControl(self, self.logger).execute),
             )
         )
@@ -177,9 +177,9 @@ class TopLevel(log.LogMixin):
         self.sublevel(
             title='System',
             choices=(
-                ('Calibrate arm', Calibrate(self, self.logger).execute),
-                ('Disable arm', Disable(self, self.logger).execute),
-                ('Re-init arm', Initialize(self, self.logger).execute),
+                ('Calibrate arm', Calibrate(self, parent_logger=self.logger).execute),
+                ('Disable arm', Disable(self, parent_logger=self.logger).execute),
+                ('Re-init arm', Initialize(self, parent_logger=self.logger).execute),
                 ('Restart app.', lambda: self._system_action(
                     'Application restart', 'systemctl restart youpi2-shell.service'
                 )),
@@ -216,11 +216,11 @@ class ShellException(Exception):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = cli.get_argument_parser()
     parser.add_argument(
         '--can-quit-to-shell',
         dest='can_quit_to_shell',
         action='store_true'
     )
     args = parser.parse_args()
-    TopLevel(can_quit_to_shell=args.can_quit_to_shell).run()
+    TopLevel(can_quit_to_shell=args.can_quit_to_shell, verbose=args.verbose, debug=args.debug).run()
