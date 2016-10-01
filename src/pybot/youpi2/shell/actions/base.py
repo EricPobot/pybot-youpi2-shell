@@ -70,8 +70,11 @@ class ExternalProcessAction(Action):
 
         # start the action as a child process
         try:
-            self.log_info('starting "%s" as subprocess', self.COMMAND)
-            app_proc = subprocess.Popen(shlex.split(self.COMMAND))
+            cmde = self.COMMAND
+            if self.log_getEffectiveLevel() == log.DEBUG:
+                cmde += ' -v'
+            self.log_info('starting "%s" as subprocess', cmde)
+            app_proc = subprocess.Popen(shlex.split(cmde))
             self.log_info('PID=%d', app_proc.pid)
 
         except OSError as e:
