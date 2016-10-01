@@ -100,8 +100,10 @@ class TopLevel(log.LogMixin):
         except Interrupted:
             self.logger.info('program interrupted')
             self.panel.reset()
-            self.panel.center_text_at("External interrupt", line=2)
-            self.panel.center_text_at("received", line=3)
+            self.panel.center_text_at("External interrupt", line=1)
+            self.panel.center_text_at("Application exited", line=3)
+            self.panel.center_text_at("I'll be back...", line=4)
+            self.logger.info('Application terminated')
         except ShellException:
             self.logger.critical('unrecoverable error occurred, aborting application')
             self.panel.reset()
@@ -111,7 +113,7 @@ class TopLevel(log.LogMixin):
             self.panel.reset()
             self.panel.center_text_at("Application exited", line=2)
             self.panel.center_text_at("I'll be back...", line=3)
-            self.logger.info('terminated')
+            self.logger.info('Application terminated')
         finally:
             self.panel.leds_off()
 
@@ -160,7 +162,7 @@ class TopLevel(log.LogMixin):
                 ('Hanoi demo', HanoiTowersDemo(self, self.logger).execute),
                 ('Minitel UI', MinitelUi(self, self.logger).execute),
                 ('HTTP server', HttpServer(self, self.logger).execute),
-                ('Gamepad control', GamepadControl(self, self.logger).execute),
+                # ('Gamepad control', GamepadControl(self, self.logger).execute),
             )
         )
 
