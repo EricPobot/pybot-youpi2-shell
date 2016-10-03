@@ -91,8 +91,8 @@ class TopLevel(log.LogMixin):
                 choices=(
                     ('Mode select', self.mode_selector),
                     ('System functions', self.system_functions),
-                    ('About', self.display_about_long),
-                    ('Info', self.display_system_info),
+                    ('System info', self.display_system_info),
+                    ('About Youpi', self.display_about_long),
                 ),
                 is_toplevel=True
             )
