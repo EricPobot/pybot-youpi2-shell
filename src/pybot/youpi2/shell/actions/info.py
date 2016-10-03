@@ -28,10 +28,21 @@ class DisplayAbout(Action):
         if self._long_text:
             text += [
                 "",
-                "author: E. PASCUAL",
+                "Powered by",
+                "RaspberryPi 3",
                 "",
-                "lang: Python",
-                "RaspberryPi 3 inside",
+                "6 STMicro L6470",
+                "Stepper motors",
+                "drivers inside",
+                "",
+                "100% Python software"
+                "",
+                "Embedded Web server",
+                "based on Bottle",
+                "",
+                "designed, built and"
+                "developped by",
+                "E. PASCUAL",
             ]
 
         self.panel.scroll_text(text, from_bottom=False)
