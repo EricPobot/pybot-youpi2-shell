@@ -35,12 +35,12 @@ class DisplayAbout(Action):
                 "Stepper motors",
                 "drivers inside",
                 "",
-                "100% Python software"
+                "100% Python software",
                 "",
                 "Embedded Web server",
                 "based on Bottle",
                 "",
-                "designed, built and"
+                "designed, built and",
                 "developped by",
                 "E. PASCUAL",
             ]
