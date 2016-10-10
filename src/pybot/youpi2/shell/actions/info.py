@@ -32,7 +32,7 @@ class DisplayAbout(Action):
                 "RaspberryPi 3",
                 "",
                 "6 STMicro L6470",
-                "Stepper motors",
+                "Stepper motor",
                 "drivers inside",
                 "",
                 "100% Python software",
