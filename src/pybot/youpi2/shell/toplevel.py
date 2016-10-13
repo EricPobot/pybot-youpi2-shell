@@ -101,7 +101,7 @@ class TopLevel(log.LogMixin):
             self.logger.info('program interrupted')
             self.panel.reset()
             self.panel.center_text_at("External interrupt", line=1)
-            self.panel.center_text_at("Application exited", line=3)
+            self.panel.center_text_at("Shell exited", line=3)
             self.panel.center_text_at("I'll be back...", line=4)
             self.logger.info('Application terminated')
         except ShellException:
@@ -111,7 +111,7 @@ class TopLevel(log.LogMixin):
             self.panel.center_text_at("Application aborted", line=3)
         else:
             self.panel.reset()
-            self.panel.center_text_at("Application exited", line=2)
+            self.panel.center_text_at("Shell exited", line=2)
             self.panel.center_text_at("I'll be back...", line=3)
             self.logger.info('Application terminated')
         finally:
@@ -188,7 +188,7 @@ class TopLevel(log.LogMixin):
         )
 
     def display_about_long(self):
-        DisplayAbout(self, version=version, long_text=True).execute()
+        DisplayAbout(self, version=version, long_text=True, forever=True).execute()
 
     def _quit_to_shell(self):
         self.logger.info('"quit to shell" requested')
