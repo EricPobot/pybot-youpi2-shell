@@ -15,6 +15,7 @@ __all__ = ['DisplayAbout', 'DisplaySystemInfo']
 class DisplayAbout(Action):
     _version = 'none'
     _long_text = False
+    _forever = False
 
     def execute(self):
         text = [
@@ -45,7 +46,13 @@ class DisplayAbout(Action):
                 "E. PASCUAL",
             ]
 
-        self.panel.scroll_text(text, from_bottom=False)
+        if self._forever:
+            while True:
+                self.panel.scroll_text(text, from_bottom=False, end_delay=0)
+                if self.panel.wait_for_key(max_wait=3, blink=True):
+                    return
+        else:
+            self.panel.scroll_text(text, from_bottom=False)
 
 
 class DisplaySystemInfo(Action):

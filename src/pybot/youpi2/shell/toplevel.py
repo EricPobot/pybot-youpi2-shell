@@ -158,8 +158,8 @@ class TopLevel(log.LogMixin):
         self.sublevel(
             title='Select mode',
             choices=(
-                ('Automatic demo', DemoAuto(self, parent_logger=self.logger).execute),
                 ('Hanoi demo', HanoiTowersDemo(self, parent_logger=self.logger).execute),
+                ('Automatic demo', DemoAuto(self, parent_logger=self.logger).execute),
                 ('Minitel UI', MinitelUi(self, parent_logger=self.logger).execute),
                 ('HTTP server', HttpServer(self, parent_logger=self.logger).execute),
                 # ('Gamepad control', GamepadControl(self, self.logger).execute),
