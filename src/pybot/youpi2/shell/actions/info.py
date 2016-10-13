@@ -19,7 +19,7 @@ class DisplayAbout(Action):
 
     def execute(self):
         text = [
-            "Youpi 2.0 Shell",
+            "Youpi 2.0",
             "by POBOT",
             "",
             "version %(version)s" % {
@@ -48,11 +48,11 @@ class DisplayAbout(Action):
 
         if self._forever:
             while True:
-                self.panel.scroll_text(text, from_bottom=False, end_delay=0)
+                self.panel.scroll_text(text, from_bottom=True, end_delay=0)
                 if self.panel.wait_for_key(max_wait=3, blink=True):
                     return
         else:
-            self.panel.scroll_text(text, from_bottom=False)
+            self.panel.scroll_text(text, from_bottom=True)
 
 
 class DisplaySystemInfo(Action):

@@ -181,7 +181,7 @@ class TopLevel(log.LogMixin):
                 ('Disable arm', Disable(self, parent_logger=self.logger).execute),
                 ('Re-init arm', Initialize(self, parent_logger=self.logger).execute),
                 ('Restart shell', lambda: self._system_action(
-                    'Shell restarting...', 'systemctl restart youpi2-shell.service'
+                    'Shell will restart', 'systemctl restart youpi2-shell.service'
                 )),
                 ('Shutdown', self.shutdown),
             )
