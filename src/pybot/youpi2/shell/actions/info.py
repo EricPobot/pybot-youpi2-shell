@@ -33,7 +33,7 @@ class DisplayAbout(Action):
                 "RaspberryPi 3",
                 "",
                 "6 STMicro L6470",
-                "Stepper motor",
+                "stepper motor",
                 "drivers inside",
                 "",
                 "100% Python software",
@@ -41,6 +41,7 @@ class DisplayAbout(Action):
                 "Embedded Web server",
                 "based on Bottle",
                 "",
+                "Passionately"
                 "designed, built and",
                 "developped by",
                 "E. PASCUAL",
