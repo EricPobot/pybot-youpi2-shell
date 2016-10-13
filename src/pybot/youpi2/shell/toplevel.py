@@ -180,8 +180,8 @@ class TopLevel(log.LogMixin):
                 ('Calibrate arm', Calibrate(self, parent_logger=self.logger).execute),
                 ('Disable arm', Disable(self, parent_logger=self.logger).execute),
                 ('Re-init arm', Initialize(self, parent_logger=self.logger).execute),
-                ('Restart app.', lambda: self._system_action(
-                    'Application restart', 'systemctl restart youpi2-shell.service'
+                ('Restart shell', lambda: self._system_action(
+                    'Shell restarting...', 'systemctl restart youpi2-shell.service'
                 )),
                 ('Shutdown', self.shutdown),
             )
