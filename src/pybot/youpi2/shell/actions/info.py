@@ -41,7 +41,7 @@ class DisplayAbout(Action):
                 "Embedded Web server",
                 "based on Bottle",
                 "",
-                "Passionately"
+                "Passionately",
                 "designed, built and",
                 "developped by",
                 "E. PASCUAL",
